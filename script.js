@@ -121,17 +121,31 @@ function displayName(player) {
   return state.players[player].name.trim() || defaultName(player);
 }
 
+// Writes the status line in the player's colour, with their name emphasised.
+function setStatus(player, text) {
+  const name = document.createElement('span');
+  name.className = 'status-name';
+  name.textContent = displayName(player);
+  statusEl.className = `status ${player.toLowerCase()}`;
+  statusEl.replaceChildren(name, text);
+}
+
 function render() {
   cells.forEach((cell, i) => {
     cell.setAttribute('aria-disabled', String(state.over || Boolean(state.board[i])));
   });
   if (state.result) {
     const { player } = state.result;
-    statusEl.textContent = player === 'draw' ? "It's a draw!" : `${displayName(player)} wins!`;
+    if (player === 'draw') {
+      statusEl.className = 'status';
+      statusEl.textContent = "It's a draw!";
+    } else {
+      setStatus(player, ' wins!');
+    }
+  } else if (isAiTurn()) {
+    setStatus('O', ' is thinking…');
   } else {
-    statusEl.textContent = isAiTurn()
-      ? `${displayName('O')} is thinking…`
-      : `${displayName(state.current)}'s turn (${state.current})`;
+    setStatus(state.current, `'s turn (${state.current})`);
   }
   for (const key of Object.keys(scoreEls)) scoreEls[key].textContent = state.score[key];
   for (const p of ['X', 'O']) {
