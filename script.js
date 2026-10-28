@@ -109,6 +109,10 @@ function finish(result) {
   state.score[result.player]++;
   result.line.forEach((i) => cells[i].classList.add('win'));
   render();
+  if (result.player !== 'draw') {
+    const winColor = getComputedStyle(document.documentElement).getPropertyValue(`--${result.player.toLowerCase()}`).trim();
+    Fireworks.launch([winColor, winColor, '#ffd43b', '#ffffff']);
+  }
 }
 
 const COMPUTER_NAMES = { easy: 'Sir Beep-a-Lot', hard: 'The Grand Algorithm' };
@@ -241,6 +245,7 @@ function minimax(board, maximizing, depth) {
 }
 
 function newRound() {
+  Fireworks.stop();
   clearTimeout(state.aiTimer);
   state.aiTimer = null;
   state.board.fill(null);
