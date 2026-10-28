@@ -53,9 +53,6 @@ const Fireworks = (() => {
 
   function bangSound(pan) {
     burst({ length: 0.9, volume: 0.9, filter: 'lowpass', from: 1500, to: 120, pan });
-    for (let i = 0; i < 12; i++) {
-      burst({ at: 0.15 + Math.random() * 0.8, length: 0.04, volume: 0.25, filter: 'highpass', from: 3000, to: 5000, pan });
-    }
   }
 
   function stop() {
