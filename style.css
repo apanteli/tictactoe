@@ -1,0 +1,232 @@
+:root {
+  --bg: #f4f1ea;
+  --surface: #ffffff;
+  --text: #1f2328;
+  --muted: #6b7280;
+  --line: #d6d0c4;
+  --x: #d9480f;
+  --o: #1971c2;
+  --win: #fff3bf;
+  --accent: #1f2328;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15171a;
+    --surface: #1f2226;
+    --text: #e8e6e3;
+    --muted: #9aa0a6;
+    --line: #34383d;
+    --x: #ff8a4c;
+    --o: #5ab0ff;
+    --win: #3b3420;
+    --accent: #e8e6e3;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding: 16px;
+}
+
+.app {
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font-size: 2rem;
+  letter-spacing: 0.02em;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+  color: var(--muted);
+}
+
+select, button {
+  font: inherit;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  padding: 8px 12px;
+}
+
+.players {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  margin: 0 0 16px;
+  padding: 8px 12px 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.players legend {
+  color: var(--muted);
+  padding: 0 4px;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-row .mark {
+  width: 1.5em;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.mark.x { color: var(--x); }
+.mark.o { color: var(--o); }
+
+.player-row input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  padding: 8px 10px;
+}
+
+.player-row input[type="color"] {
+  width: 44px;
+  height: 40px;
+  padding: 2px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.player-row input:focus-visible {
+  outline: 3px solid var(--o);
+  outline-offset: 2px;
+}
+
+.score .label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scoreboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.score {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.score .label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.score.x span:last-child { color: var(--x); }
+.score.o span:last-child { color: var(--o); }
+
+.status {
+  min-height: 1.5em;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0 0 12px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  aspect-ratio: 1;
+  margin-bottom: 16px;
+}
+
+.cell {
+  aspect-ratio: 1;
+  font-size: clamp(2.5rem, 14vw, 4rem);
+  font-weight: 700;
+  line-height: 1;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.cell:hover:not([aria-disabled="true"]) { background: color-mix(in srgb, var(--surface), var(--text) 6%); }
+.cell:active:not([aria-disabled="true"]) { transform: scale(0.97); }
+.cell[aria-disabled="true"] { cursor: default; }
+.cell.x { color: var(--x); }
+.cell.o { color: var(--o); }
+.cell.win { background: var(--win); }
+
+.cell:focus-visible, button:focus-visible, select:focus-visible {
+  outline: 3px solid var(--o);
+  outline-offset: 2px;
+}
+
+.cell.placed { animation: pop 0.18s ease-out; }
+
+@keyframes pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.actions button {
+  cursor: pointer;
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.actions button.secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--line);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell.placed { animation: none; }
+  .cell { transition: none; }
+}
