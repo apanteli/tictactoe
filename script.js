@@ -21,12 +21,27 @@ const nameInputs = {
   X: document.getElementById('name-x'),
   O: document.getElementById('name-o'),
 };
-const colorInputs = {
+const palettes = {
   X: document.getElementById('color-x'),
   O: document.getElementById('color-o'),
 };
+const colorButtons = {
+  X: document.getElementById('color-btn-x'),
+  O: document.getElementById('color-btn-o'),
+};
 
 const STORAGE_KEY = 'tictactoe-players';
+
+const COLORS = {
+  Red: '#e03131',
+  Orange: '#f76707',
+  Yellow: '#f59f00',
+  Green: '#2f9e44',
+  Teal: '#0c8599',
+  Blue: '#1971c2',
+  Purple: '#7048e8',
+  Pink: '#d6336c',
+};
 
 const state = {
   board: Array(9).fill(null),
@@ -133,7 +148,9 @@ function applyColors() {
     const prop = `--${p.toLowerCase()}`;
     if (color) root.style.setProperty(prop, color);
     else root.style.removeProperty(prop);
-    colorInputs[p].value = color || getComputedStyle(root).getPropertyValue(prop).trim();
+    for (const swatch of palettes[p].children) {
+      swatch.setAttribute('aria-pressed', swatch.dataset.color === color);
+    }
   }
 }
 
@@ -142,7 +159,7 @@ function loadPlayers() {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     for (const p of ['X', 'O']) {
       if (typeof saved?.[p]?.name === 'string') state.players[p].name = saved[p].name;
-      if (/^#[0-9a-f]{6}$/i.test(saved?.[p]?.color)) state.players[p].color = saved[p].color;
+      if (Object.values(COLORS).includes(saved?.[p]?.color)) state.players[p].color = saved[p].color;
     }
   } catch {
     // Storage unavailable or corrupt; fall back to defaults.
@@ -252,17 +269,56 @@ modeEl.addEventListener('change', () => {
   newRound();
 });
 
+function toggleColorMenu(p, open) {
+  palettes[p].hidden = !open;
+  colorButtons[p].setAttribute('aria-expanded', open);
+  if (open) {
+    const selected = palettes[p].querySelector('[aria-pressed="true"]');
+    (selected || palettes[p].firstElementChild).focus();
+  }
+}
+
+document.addEventListener('click', (e) => {
+  for (const p of ['X', 'O']) {
+    if (!palettes[p].hidden && !palettes[p].parentElement.contains(e.target)) toggleColorMenu(p, false);
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  for (const p of ['X', 'O']) {
+    if (!palettes[p].hidden) {
+      toggleColorMenu(p, false);
+      colorButtons[p].focus();
+    }
+  }
+});
+
 for (const p of ['X', 'O']) {
+  colorButtons[p].addEventListener('click', () => toggleColorMenu(p, palettes[p].hidden));
   nameInputs[p].addEventListener('input', () => {
     state.players[p].name = nameInputs[p].value;
     savePlayers();
     render();
   });
-  colorInputs[p].addEventListener('input', () => {
-    state.players[p].color = colorInputs[p].value;
-    savePlayers();
-    applyColors();
-  });
+  for (const [name, hex] of Object.entries(COLORS)) {
+    const swatch = document.createElement('button');
+    swatch.type = 'button';
+    swatch.className = 'swatch';
+    swatch.style.background = hex;
+    swatch.dataset.color = hex;
+    swatch.title = name;
+    swatch.setAttribute('aria-label', name);
+    // Clicking the selected swatch again returns to the theme's default colour.
+    swatch.addEventListener('click', () => {
+      state.players[p].color = state.players[p].color === hex ? null : hex;
+      savePlayers();
+      applyColors();
+      toggleColorMenu(p, false);
+      colorButtons[p].focus();
+    });
+    palettes[p].append(swatch);
+  }
 }
 
 loadPlayers();

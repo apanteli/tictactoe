@@ -24,12 +24,18 @@
       <div class="player-row">
         <span class="mark x" aria-hidden="true">X</span>
         <input id="name-x" type="text" maxlength="16" placeholder="Player X" autocomplete="off" aria-label="Nickname for X">
-        <input id="color-x" type="color" aria-label="Colour for X">
+        <div class="color-menu">
+          <button id="color-btn-x" class="swatch color-trigger x" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="color-x" aria-label="Colour for X" title="Choose colour"></button>
+          <div id="color-x" class="palette" role="group" aria-label="Colour for X" hidden></div>
+        </div>
       </div>
       <div class="player-row">
         <span class="mark o" aria-hidden="true">O</span>
         <input id="name-o" type="text" maxlength="16" placeholder="Player O" autocomplete="off" aria-label="Nickname for O">
-        <input id="color-o" type="color" aria-label="Colour for O">
+        <div class="color-menu">
+          <button id="color-btn-o" class="swatch color-trigger o" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="color-o" aria-label="Colour for O" title="Choose colour"></button>
+          <div id="color-o" class="palette" role="group" aria-label="Colour for O" hidden></div>
+        </div>
       </div>
     </fieldset>
 

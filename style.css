@@ -108,17 +108,52 @@ select, button {
   padding: 8px 10px;
 }
 
-.player-row input[type="color"] {
-  width: 44px;
-  height: 40px;
-  padding: 2px;
-  border-radius: 8px;
+.color-menu {
+  position: relative;
+}
+
+.palette {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(4, 24px);
+  gap: 8px;
+  padding: 10px;
   border: 1px solid var(--line);
-  background: var(--bg);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.15);
+}
+
+.palette[hidden] { display: none; }
+
+.swatch {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--line);
   cursor: pointer;
 }
 
-.player-row input:focus-visible {
+.swatch[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px var(--text);
+}
+
+.color-trigger {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.color-trigger.x { background: var(--x); }
+.color-trigger.o { background: var(--o); }
+
+.player-row input:focus-visible,
+.swatch:focus-visible {
   outline: 3px solid var(--o);
   outline-offset: 2px;
 }
