@@ -96,10 +96,14 @@ function finish(result) {
   render();
 }
 
+const COMPUTER_NAMES = { easy: 'Sir Beep-a-Lot', hard: 'The Grand Algorithm' };
+
+function defaultName(player) {
+  return player === 'O' && modeEl.value !== 'pvp' ? COMPUTER_NAMES[modeEl.value] : `Player ${player}`;
+}
+
 function displayName(player) {
-  const name = state.players[player].name.trim();
-  if (name) return name;
-  return player === 'O' && modeEl.value !== 'pvp' ? 'Computer' : `Player ${player}`;
+  return state.players[player].name.trim() || defaultName(player);
 }
 
 function render() {
@@ -118,7 +122,7 @@ function render() {
   for (const p of ['X', 'O']) {
     labelEls[p].textContent = displayName(p);
     labelEls[p].title = displayName(p);
-    nameInputs[p].placeholder = displayName(p) === 'Computer' ? 'Computer' : `Player ${p}`;
+    nameInputs[p].placeholder = defaultName(p);
   }
 }
 
