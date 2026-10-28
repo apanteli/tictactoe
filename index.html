@@ -36,6 +36,11 @@
           </select>
         </div>
 
+        <div class="controls">
+          <label for="target">Wins needed</label>
+          <input id="target" type="number" min="1" max="99" value="10" inputmode="numeric">
+        </div>
+
         <div class="controls toggles">
           <label><input id="fireworks-on" type="checkbox" checked> Fireworks</label>
           <label><input id="sound-on" type="checkbox" checked> Sound</label>
@@ -62,6 +67,8 @@
         </fieldset>
       </div>
     </dialog>
+
+    <p id="target-note" class="target-note">First to 10 wins</p>
 
     <div class="scoreboard" aria-label="Score">
       <div class="score x"><span class="label" id="label-x">X</span><span id="score-x">0</span></div>

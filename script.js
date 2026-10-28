@@ -38,6 +38,12 @@ const soundToggle = document.getElementById('sound-on');
 
 const STORAGE_KEY = 'tictactoe-players';
 const EFFECTS_KEY = 'tictactoe-effects';
+const TARGET_KEY = 'tictactoe-target';
+const DEFAULT_TARGET = 10;
+
+const targetInput = document.getElementById('target');
+const targetNoteEl = document.getElementById('target-note');
+const newRoundBtn = document.getElementById('new-round');
 
 const COLORS = {
   Red: '#e03131',
@@ -58,6 +64,9 @@ const state = {
   result: null,
   score: { X: 0, O: 0, draw: 0 },
   aiTimer: null,
+  // Rounds a player must win to take the match; champion is set once someone does.
+  target: DEFAULT_TARGET,
+  champion: null,
   // color is null until the player picks one, so the theme's light/dark defaults apply.
   players: { X: { name: '', color: null }, O: { name: '', color: null } },
 };
@@ -114,6 +123,7 @@ function finish(result) {
   state.over = true;
   state.result = result;
   state.score[result.player]++;
+  if (result.player !== 'draw' && state.score[result.player] >= state.target) state.champion = result.player;
   result.line.forEach((i) => cells[i].classList.add('win'));
   render();
   if (result.player !== 'draw' && fireworksToggle.checked) {
@@ -145,7 +155,9 @@ function render() {
   cells.forEach((cell, i) => {
     cell.setAttribute('aria-disabled', String(state.over || Boolean(state.board[i])));
   });
-  if (state.result) {
+  if (state.champion) {
+    setStatus(state.champion, ' wins the match!');
+  } else if (state.result) {
     const { player } = state.result;
     if (player === 'draw') {
       statusEl.className = 'status';
@@ -159,6 +171,8 @@ function render() {
     setStatus(state.current, `'s turn (${state.current})`);
   }
   for (const key of Object.keys(scoreEls)) scoreEls[key].textContent = state.score[key];
+  targetNoteEl.textContent = `First to ${state.target} ${state.target === 1 ? 'win' : 'wins'}`;
+  newRoundBtn.textContent = state.champion ? 'New match' : 'New round';
   for (const p of ['X', 'O']) {
     labelEls[p].textContent = displayName(p);
     labelEls[p].title = displayName(p);
@@ -212,6 +226,23 @@ function loadEffects() {
 function saveEffects() {
   try {
     localStorage.setItem(EFFECTS_KEY, JSON.stringify({ fireworks: fireworksToggle.checked, sound: soundToggle.checked }));
+  } catch {
+    // Storage unavailable; settings just won't persist.
+  }
+}
+
+function loadTarget() {
+  try {
+    const saved = Number(localStorage.getItem(TARGET_KEY));
+    if (Number.isInteger(saved) && saved >= 1 && saved <= 99) state.target = saved;
+  } catch {
+    // Storage unavailable; fall back to the default.
+  }
+}
+
+function saveTarget() {
+  try {
+    localStorage.setItem(TARGET_KEY, String(state.target));
   } catch {
     // Storage unavailable; settings just won't persist.
   }
@@ -277,6 +308,7 @@ function minimax(board, maximizing, depth) {
 }
 
 function newRound() {
+  if (state.champion) return newMatch();
   Fireworks.stop();
   clearTimeout(state.aiTimer);
   state.aiTimer = null;
@@ -309,11 +341,24 @@ function moveFocus(e, i) {
   cells[next].focus();
 }
 
-document.getElementById('new-round').addEventListener('click', newRound);
-document.getElementById('reset-score').addEventListener('click', () => {
+function newMatch() {
   state.score = { X: 0, O: 0, draw: 0 };
+  state.champion = null;
   state.starter = 'O'; // so the next round starts with X
   newRound();
+}
+
+newRoundBtn.addEventListener('click', newRound);
+document.getElementById('reset-score').addEventListener('click', newMatch);
+// Scores are kept; a player already at or past the new target wins on their next round win.
+targetInput.addEventListener('change', () => {
+  const value = Math.round(Number(targetInput.value));
+  if (value >= 1 && value <= 99) {
+    state.target = value;
+    saveTarget();
+  }
+  targetInput.value = state.target;
+  render();
 });
 modeEl.addEventListener('change', () => {
   state.starter = 'O';
@@ -396,4 +441,6 @@ for (const p of ['X', 'O']) nameInputs[p].value = state.players[p].name;
 applyColors();
 loadEffects();
 applyEffects();
+loadTarget();
+targetInput.value = state.target;
 render();

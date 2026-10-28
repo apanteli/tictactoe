@@ -135,6 +135,27 @@ h1 {
   color: var(--muted);
 }
 
+#target {
+  width: 4.5em;
+  font: inherit;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  padding: 8px 10px;
+}
+
+#target:focus-visible {
+  outline: 3px solid var(--o);
+  outline-offset: 2px;
+}
+
+.target-note {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 .toggles {
   gap: 16px;
 }
