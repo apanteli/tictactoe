@@ -8,10 +8,12 @@ const Fireworks = (() => {
   let frame = null;
   let audio = null;
   let output = null;
+  let soundOn = true;
 
   // Sounds are synthesised with Web Audio, so there are no files to load.
   function startSound() {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!soundOn) return;
     if (!AudioCtx) return;
     audio ??= new AudioCtx();
     audio.resume();
@@ -55,12 +57,22 @@ const Fireworks = (() => {
     burst({ length: 0.9, volume: 0.9, filter: 'lowpass', from: 1500, to: 120, pan });
   }
 
+  function stopSound() {
+    output?.disconnect();
+    output = null;
+  }
+
   function stop() {
     cancelAnimationFrame(frame);
     canvas?.remove();
     canvas = null;
-    output?.disconnect();
-    output = null;
+    stopSound();
+  }
+
+  // Takes effect immediately, including during a show already running.
+  function setSound(on) {
+    soundOn = on;
+    if (!on) stopSound();
   }
 
   function launch(colors) {
@@ -152,5 +164,5 @@ const Fireworks = (() => {
     frame = requestAnimationFrame(step);
   }
 
-  return { launch, stop };
+  return { launch, stop, setSound };
 })();

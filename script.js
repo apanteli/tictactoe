@@ -30,7 +30,14 @@ const colorButtons = {
   O: document.getElementById('color-btn-o'),
 };
 
+const optionsDialog = document.getElementById('options');
+const optionsOpen = document.getElementById('options-open');
+const optionsClose = document.getElementById('options-close');
+const fireworksToggle = document.getElementById('fireworks-on');
+const soundToggle = document.getElementById('sound-on');
+
 const STORAGE_KEY = 'tictactoe-players';
+const EFFECTS_KEY = 'tictactoe-effects';
 
 const COLORS = {
   Red: '#e03131',
@@ -109,7 +116,7 @@ function finish(result) {
   state.score[result.player]++;
   result.line.forEach((i) => cells[i].classList.add('win'));
   render();
-  if (result.player !== 'draw') {
+  if (result.player !== 'draw' && fireworksToggle.checked) {
     const winColor = getComputedStyle(document.documentElement).getPropertyValue(`--${result.player.toLowerCase()}`).trim();
     Fireworks.launch([winColor, winColor, '#ffd43b', '#ffffff']);
   }
@@ -190,6 +197,31 @@ function savePlayers() {
   } catch {
     // Storage unavailable; settings just won't persist.
   }
+}
+
+function loadEffects() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(EFFECTS_KEY));
+    if (typeof saved?.fireworks === 'boolean') fireworksToggle.checked = saved.fireworks;
+    if (typeof saved?.sound === 'boolean') soundToggle.checked = saved.sound;
+  } catch {
+    // Storage unavailable or corrupt; fall back to defaults.
+  }
+}
+
+function saveEffects() {
+  try {
+    localStorage.setItem(EFFECTS_KEY, JSON.stringify({ fireworks: fireworksToggle.checked, sound: soundToggle.checked }));
+  } catch {
+    // Storage unavailable; settings just won't persist.
+  }
+}
+
+// The only sounds are the fireworks', so sound can't be toggled while they're off.
+function applyEffects() {
+  soundToggle.disabled = !fireworksToggle.checked;
+  Fireworks.setSound(soundToggle.checked);
+  if (!fireworksToggle.checked) Fireworks.stop();
 }
 
 function scheduleAi() {
@@ -307,10 +339,22 @@ document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   for (const p of ['X', 'O']) {
     if (!palettes[p].hidden) {
+      // Close just the palette, not the options dialog around it.
+      e.preventDefault();
       toggleColorMenu(p, false);
       colorButtons[p].focus();
     }
   }
+});
+
+optionsOpen.addEventListener('click', () => optionsDialog.showModal());
+optionsClose.addEventListener('click', () => optionsDialog.close());
+// The dialog element itself is only the click target outside its padded body, i.e. on the backdrop.
+optionsDialog.addEventListener('click', (e) => {
+  if (e.target === optionsDialog) optionsDialog.close();
+});
+optionsDialog.addEventListener('close', () => {
+  for (const p of ['X', 'O']) toggleColorMenu(p, false);
 });
 
 for (const p of ['X', 'O']) {
@@ -340,7 +384,16 @@ for (const p of ['X', 'O']) {
   }
 }
 
+for (const toggle of [fireworksToggle, soundToggle]) {
+  toggle.addEventListener('change', () => {
+    saveEffects();
+    applyEffects();
+  });
+}
+
 loadPlayers();
 for (const p of ['X', 'O']) nameInputs[p].value = state.players[p].name;
 applyColors();
+loadEffects();
+applyEffects();
 render();

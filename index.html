@@ -8,36 +8,60 @@
 </head>
 <body>
   <main class="app">
-    <h1>Tic Tac Toe</h1>
+    <header class="topbar">
+      <h1>Tic Tac Toe</h1>
+      <button id="options-open" class="icon-button" type="button" aria-haspopup="dialog" aria-label="Options" title="Options">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </header>
 
-    <div class="controls">
-      <label for="mode">Mode</label>
-      <select id="mode">
-        <option value="pvp">2 players</option>
-        <option value="easy">vs Computer (easy)</option>
-        <option value="hard">vs Computer (unbeatable)</option>
-      </select>
-    </div>
+    <dialog id="options" class="options" aria-labelledby="options-title">
+      <div class="options-body">
+        <div class="options-head">
+          <h2 id="options-title">Options</h2>
+          <button id="options-close" class="icon-button" type="button" aria-label="Close options" title="Close">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
 
-    <fieldset class="players">
-      <legend>Players</legend>
-      <div class="player-row">
-        <span class="mark x" aria-hidden="true">X</span>
-        <input id="name-x" type="text" maxlength="16" placeholder="Player X" autocomplete="off" aria-label="Nickname for X">
-        <div class="color-menu">
-          <button id="color-btn-x" class="swatch color-trigger x" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="color-x" aria-label="Colour for X" title="Choose colour"></button>
-          <div id="color-x" class="palette" role="group" aria-label="Colour for X" hidden></div>
+        <div class="controls">
+          <label for="mode">Mode</label>
+          <select id="mode">
+            <option value="pvp">2 players</option>
+            <option value="easy">vs Computer (easy)</option>
+            <option value="hard">vs Computer (unbeatable)</option>
+          </select>
         </div>
-      </div>
-      <div class="player-row">
-        <span class="mark o" aria-hidden="true">O</span>
-        <input id="name-o" type="text" maxlength="16" placeholder="Player O" autocomplete="off" aria-label="Nickname for O">
-        <div class="color-menu">
-          <button id="color-btn-o" class="swatch color-trigger o" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="color-o" aria-label="Colour for O" title="Choose colour"></button>
-          <div id="color-o" class="palette" role="group" aria-label="Colour for O" hidden></div>
+
+        <div class="controls toggles">
+          <label><input id="fireworks-on" type="checkbox" checked> Fireworks</label>
+          <label><input id="sound-on" type="checkbox" checked> Sound</label>
         </div>
+
+        <fieldset class="players">
+          <legend>Players</legend>
+          <div class="player-row">
+            <span class="mark x" aria-hidden="true">X</span>
+            <input id="name-x" type="text" maxlength="16" placeholder="Player X" autocomplete="off" aria-label="Nickname for X">
+            <div class="color-menu">
+              <button id="color-btn-x" class="swatch color-trigger x" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="color-x" aria-label="Colour for X" title="Choose colour"></button>
+              <div id="color-x" class="palette" role="group" aria-label="Colour for X" hidden></div>
+            </div>
+          </div>
+          <div class="player-row">
+            <span class="mark o" aria-hidden="true">O</span>
+            <input id="name-o" type="text" maxlength="16" placeholder="Player O" autocomplete="off" aria-label="Nickname for O">
+            <div class="color-menu">
+              <button id="color-btn-o" class="swatch color-trigger o" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="color-o" aria-label="Colour for O" title="Choose colour"></button>
+              <div id="color-o" class="palette" role="group" aria-label="Colour for O" hidden></div>
+            </div>
+          </div>
+        </fieldset>
       </div>
-    </fieldset>
+    </dialog>
 
     <div class="scoreboard" aria-label="Score">
       <div class="score x"><span class="label" id="label-x">X</span><span id="score-x">0</span></div>
